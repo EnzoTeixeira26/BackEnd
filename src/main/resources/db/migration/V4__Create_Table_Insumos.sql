@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS insumos (
+    idInsumos SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    categoria VARCHAR(20) NOT NULL CHECK (categoria IN ('MUNICAO', 'COMBUSTIVEL', 'ALIMENTACAO', 'MEDICAMENTO', 'FERRAMENTA')),
+    quantidade INT NOT NULL DEFAULT 0,
+    quantidade_minima INT NOT NULL DEFAULT 0,
+    unidade VARCHAR(5) DEFAULT 'UN' CHECK (unidade IN ('UN', 'KG', 'L', 'CX', 'PC')),
+    localizacao VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
