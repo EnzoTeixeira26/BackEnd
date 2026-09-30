@@ -48,6 +48,11 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (usuariosRepository.count() > 0) {
+            System.out.println("=== BANCO JÁ POPULADO - PULANDO DATALOADER ===");
+            return;
+        }
+
         System.out.println("=== INICIANDO CARREGAMENTO DE DADOS DO SGM-001 ===");
 
         // Limpa dados existentes - (primeiro as que têm foreign keys)
@@ -67,9 +72,9 @@ public class DataLoader implements CommandLineRunner {
         criarSoldados();
         criarEquipamentos();
         criarInsumos();
-        criarMovimentacoes();          // depende de usuarios + insumos
-        criarAtividades();             // depende de usuarios
-        criarSoldadosEquipamentos();   // depende de soldados + equipamentos + usuarios
+        criarMovimentacoes();
+        criarAtividades();
+        criarSoldadosEquipamentos();
 
         System.out.println("=== DADOS CARREGADOS COM SUCESSO ===");
         System.out.println("Usuários: " + usuariosRepository.count());
@@ -315,7 +320,6 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void criarMovimentacoes() {
-        // Buscar usuários pelo identificador
         Usuarios admin = usuariosRepository.findByIdentificador("202600000000001").orElse(null);
         Usuarios operador = usuariosRepository.findByIdentificador("202600000000002").orElse(null);
 
@@ -324,7 +328,6 @@ public class DataLoader implements CommandLineRunner {
             return;
         }
 
-        // Buscar insumos pelo nome
         Insumos munição556 = insumosRepository.findByNome("Munição 5.56mm").orElse(null);
         Insumos combustivel = insumosRepository.findByNome("Combustível Diesel").orElse(null);
         Insumos racão = insumosRepository.findByNome("Ração Operacional").orElse(null);
@@ -337,7 +340,6 @@ public class DataLoader implements CommandLineRunner {
             return;
         }
 
-        // Movimentação 1: Entrada de munição
         MovimentacoesInsumos mov1 = new MovimentacoesInsumos();
         mov1.setInsumoId(munição556.getId());
         mov1.setTipo("ENTRADA");
@@ -347,7 +349,6 @@ public class DataLoader implements CommandLineRunner {
         mov1.setData(LocalDateTime.now().minusDays(5));
         movimentacaoInsumosRepository.save(mov1);
 
-        // Movimentação 2: Saída de combustível
         MovimentacoesInsumos mov2 = new MovimentacoesInsumos();
         mov2.setInsumoId(combustivel.getId());
         mov2.setTipo("SAIDA");
@@ -357,7 +358,6 @@ public class DataLoader implements CommandLineRunner {
         mov2.setData(LocalDateTime.now().minusDays(2));
         movimentacaoInsumosRepository.save(mov2);
 
-        // Movimentação 3: Saída de ração
         MovimentacoesInsumos mov3 = new MovimentacoesInsumos();
         mov3.setInsumoId(racão.getId());
         mov3.setTipo("SAIDA");
@@ -407,20 +407,17 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void criarSoldadosEquipamentos() {
-        // Buscar usuário admin (quem está registrando a atribuição)
         Usuarios admin = usuariosRepository.findByIdentificador("202600000000001").orElse(null);
         if (admin == null) {
             System.out.println("Erro: Usuário admin não encontrado para criar atribuições");
             return;
         }
 
-        // Buscar soldados por identificador
-        Soldados soldadoJoaoSilva   = soldadosRepository.findByIdentificador("202500000000001").orElse(null); // SELVA
-        Soldados soldadoCarlosSouza = soldadosRepository.findByIdentificador("202500000000003").orElse(null); // TANQUE
-        Soldados soldadoAndreCosta  = soldadosRepository.findByIdentificador("202500000000006").orElse(null); // PARAQUEDISTA
-        Soldados soldadoRobertoLima = soldadosRepository.findByIdentificador("202500000000005").orElse(null); // JEEP
+        Soldados soldadoJoaoSilva   = soldadosRepository.findByIdentificador("202500000000001").orElse(null);
+        Soldados soldadoCarlosSouza = soldadosRepository.findByIdentificador("202500000000003").orElse(null);
+        Soldados soldadoAndreCosta  = soldadosRepository.findByIdentificador("202500000000006").orElse(null);
+        Soldados soldadoRobertoLima = soldadosRepository.findByIdentificador("202500000000005").orElse(null);
 
-        // Buscar equipamentos por código
         Equipamentos facao       = equipamentosRepository.findByCodigo("SEL-001").orElse(null);
         Equipamentos cantil      = equipamentosRepository.findByCodigo("SEL-002").orElse(null);
         Equipamentos municao120  = equipamentosRepository.findByCodigo("TAN-001").orElse(null);
@@ -435,7 +432,6 @@ public class DataLoader implements CommandLineRunner {
             return;
         }
 
-        // Atribuição 1: João Silva (SELVA) - Facão
         SoldadosEquipamentos se1 = new SoldadosEquipamentos();
         se1.setSoldadoId(soldadoJoaoSilva.getId());
         se1.setEquipamentoId(facao.getId());
@@ -445,7 +441,6 @@ public class DataLoader implements CommandLineRunner {
         se1.setDataAtribuicao(LocalDateTime.now().minusDays(10));
         soldadosEquipamentosRepository.save(se1);
 
-        // Atribuição 2: João Silva (SELVA) - Cantil
         SoldadosEquipamentos se2 = new SoldadosEquipamentos();
         se2.setSoldadoId(soldadoJoaoSilva.getId());
         se2.setEquipamentoId(cantil.getId());
@@ -455,7 +450,6 @@ public class DataLoader implements CommandLineRunner {
         se2.setDataAtribuicao(LocalDateTime.now().minusDays(10));
         soldadosEquipamentosRepository.save(se2);
 
-        // Atribuição 3: Carlos Souza (TANQUE) - Munição 120mm
         SoldadosEquipamentos se3 = new SoldadosEquipamentos();
         se3.setSoldadoId(soldadoCarlosSouza.getId());
         se3.setEquipamentoId(municao120.getId());
@@ -465,7 +459,6 @@ public class DataLoader implements CommandLineRunner {
         se3.setDataAtribuicao(LocalDateTime.now().minusDays(5));
         soldadosEquipamentosRepository.save(se3);
 
-        // Atribuição 4: Roberto Lima (JEEP) - Rádio Tático
         SoldadosEquipamentos se4 = new SoldadosEquipamentos();
         se4.setSoldadoId(soldadoRobertoLima.getId());
         se4.setEquipamentoId(radioTatico.getId());
@@ -475,7 +468,6 @@ public class DataLoader implements CommandLineRunner {
         se4.setDataAtribuicao(LocalDateTime.now().minusDays(3));
         soldadosEquipamentosRepository.save(se4);
 
-        // Atribuição 5: André Costa (PARAQUEDISTA) - Paraquedas
         SoldadosEquipamentos se5 = new SoldadosEquipamentos();
         se5.setSoldadoId(soldadoAndreCosta.getId());
         se5.setEquipamentoId(paraquedas.getId());
