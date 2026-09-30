@@ -52,13 +52,15 @@ public class DataLoader implements CommandLineRunner {
 
         // Limpa dados existentes - (primeiro as que têm foreign keys)
         // soldados_equipamentos depende de soldados, equipamentos e usuarios
-        soldadosEquipamentosRepository.deleteAll();
+
+        //Essa seção foi comentada na versão 1.8+ do projeto para motivos de teste e preservacao de dados.
+        /*soldadosEquipamentosRepository.deleteAll();
         movimentacaoInsumosRepository.deleteAll();
         atividadesRepository.deleteAll();
         equipamentosRepository.deleteAll();
         soldadosRepository.deleteAll();
         insumosRepository.deleteAll();
-        usuariosRepository.deleteAll();
+        usuariosRepository.deleteAll();*/
 
         // Criar dados - ORDEM CORRETA (primeiro as tabelas pai)
         criarUsuarios();
