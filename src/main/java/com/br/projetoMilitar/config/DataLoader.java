@@ -174,7 +174,7 @@ public class DataLoader implements CommandLineRunner {
         soldado5.setPelotao("JEEP");
         soldado5.setFuncao("Instrutor de Direção");
         soldado5.setDataIngresso(LocalDate.of(2019, 7, 22));
-        soldado5.setStatus("ATIVO");
+        soldado5.setStatus("LICENCA");
         soldadosRepository.save(soldado5);
 
         Soldados soldado6 = new Soldados();
@@ -266,6 +266,39 @@ public class DataLoader implements CommandLineRunner {
         equip6.setStatus("DISPONIVEL");
         equip6.setTipoPelotao("paraquedista");
         equipamentosRepository.save(equip6);
+
+        Equipamentos equip7 = new Equipamentos();
+        equip7.setNome("ÓLEO MOTOR");
+        equip7.setCodigo("TAN-002");
+        equip7.setQuantidade(500);
+        equip7.setFabricante("Lubrax");
+        equip7.setPeso(0.9f);
+        equip7.setDescricao("ÓLEO LUBRIFICANTE");
+        equip7.setStatus("DISPONIVEL");
+        equip7.setTipoPelotao("tanque");
+        equipamentosRepository.save(equip7);
+
+        Equipamentos equip8 = new Equipamentos();
+        equip8.setNome("KIT FERRAMENTAS");
+        equip8.setCodigo("JEEP-002");
+        equip8.setQuantidade(20);
+        equip8.setFabricante("Gedore");
+        equip8.setPeso(5.0f);
+        equip8.setDescricao("KIT DE FERRAMENTAS");
+        equip8.setStatus("DISPONIVEL");
+        equip8.setTipoPelotao("jeep");
+        equipamentosRepository.save(equip8);
+
+        Equipamentos equip9 = new Equipamentos();
+        equip9.setNome("CAPACETE");
+        equip9.setCodigo("PAR-002");
+        equip9.setQuantidade(25);
+        equip9.setFabricante("MSA");
+        equip9.setPeso(1.2f);
+        equip9.setDescricao("CAPACETE PARA QUEDISTA");
+        equip9.setStatus("DISPONIVEL");
+        equip9.setTipoPelotao("paraquedista");
+        equipamentosRepository.save(equip9);
 
         System.out.println("Equipamentos criados com sucesso!");
     }
