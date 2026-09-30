@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "insumos")
@@ -41,6 +42,18 @@ public class Insumos {
 
     @Column(name = "updated_at")
     private LocalDate updatedAt;
+
+    @Transient
+    public String getStatus(){
+        if (quantidade == null || quantidade <= 0){
+            return "ESGOTADO";            
+        }
+        if(quantidade <= quantidadeMinima){
+            return "BAIXO";
+        }
+        return "OK";
+    }
+
 
     public Long getId() {
         return id;
