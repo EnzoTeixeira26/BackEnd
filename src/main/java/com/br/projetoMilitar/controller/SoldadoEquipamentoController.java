@@ -48,26 +48,17 @@ public class SoldadoEquipamentoController {
         return new ResponseEntity<>(service.create(atribuicao), HttpStatus.CREATED);
     }
 
-    /**
-     * Remove UMA atribuição específica pelo idSoldadoEquipamento.
-     * Ex: DELETE /api/v1/soldado-equipamento/5
-     */
+     // Remove UMA atribuição específica pelo idSoldadoEquipamento.
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Remove TODAS as atribuições de um soldado de uma vez.
-     * Ex: DELETE /api/v1/soldado-equipamento/soldado/3/todos
-     *
-     * IMPORTANTE: essa rota precisa vir ANTES da rota /{id} no mapeamento,
-     * ou o Spring vai tentar interpretar "soldado" como um {id}.
-     * Como o Spring resolve por especificidade (mais segmentos = mais específico),
-     * a rota com /soldado/{soldadoId}/todos tem precedência sobre /{id}.
-     * Ainda assim, deixamos declarada logo abaixo de /{id} por organização.
-     */
+
+     // Remove TODAS as atribuições de um soldado de uma vez.
+ 
     @DeleteMapping("/soldado/{soldadoId}/todos")
     public ResponseEntity<Void> deleteAllBySoldadoId(@PathVariable Long soldadoId) {
         service.deleteAllBySoldadoId(soldadoId);

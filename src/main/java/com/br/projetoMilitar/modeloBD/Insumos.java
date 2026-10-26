@@ -43,6 +43,8 @@ public class Insumos {
     @Column(name = "updated_at")
     private LocalDate updatedAt;
 
+    // Essa anotacao serve so pra guardar no objeto java em memoria e dessa forma nao cria uma nova coluna no banco de dados
+    // nem adiciona nenhuma informacao no banco de dados, e tudo resolvido aqui.
     @Transient
     public String getStatus(){
         if (quantidade == null || quantidade <= 0){
