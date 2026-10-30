@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     email VARCHAR(100) UNIQUE,
     senha VARCHAR(255) NOT NULL,
     primeiro_acesso BOOLEAN DEFAULT TRUE,                
-    data_expiracao_senha TIMESTAMP,                      
+    data_expiracao_senha TIMESTAMP,  
+    observacao TEXT,                    
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

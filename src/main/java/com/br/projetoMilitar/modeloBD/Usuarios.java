@@ -46,6 +46,9 @@ public class Usuarios {
     @Column(name = "telefone", length = 15)
     private String telefone;
 
+    @Column(name = "observacao")
+    private String observacao;
+
     @Column(name = "email", length = 100)
     private String email;
 
@@ -168,5 +171,13 @@ public class Usuarios {
 
     public void setUpdatedAt(LocalDate updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getObservacao() {
+        return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
     }
 }

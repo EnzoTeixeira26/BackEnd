@@ -64,7 +64,8 @@ public class UsuarioService {
                     usuario.getEmail(),
                     usuario.getNome(),
                     usuario.getIdentificador(),
-                    senhaTextoPlano
+                    senhaTextoPlano,
+                    usuario.getObservacao()
                 );
                 logger.info("E-mail de boas-vindas enviado para: " + usuario.getEmail());
             } catch (Exception e) {

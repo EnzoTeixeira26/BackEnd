@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.br.projetoMilitar.modeloBD.Usuarios;
 import com.br.projetoMilitar.security.LoginRequest;
 import com.br.projetoMilitar.services.UsuarioService;
+//import com.br.projetoMilitar.services.EmailService;
 
 @RestController
 @RequestMapping("/api/v1/usuario")
@@ -26,6 +27,10 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService service;
+
+    //@Autowired
+    //private EmailService emailService;
+
 
     @GetMapping
     public ResponseEntity<List<Usuarios>> findAll() {
@@ -98,4 +103,19 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    /*@GetMapping("/teste-email")
+    public ResponseEntity<String> testarEmail() {
+    try {
+        emailService.enviarBoasVindas(
+            "enzo.santoste@gmail.com", 
+            "Coronel Teste",
+            "202600000000099",
+            "wnpr fxxp mopr txqp"
+        );
+        return ResponseEntity.ok("E-mail enviado com sucesso!");
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body("Erro: " + e.getMessage());
+    }
+}*/
 }
