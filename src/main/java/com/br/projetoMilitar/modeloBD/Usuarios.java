@@ -1,6 +1,7 @@
 package com.br.projetoMilitar.modeloBD;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,6 +21,12 @@ public class Usuarios {
 
     @Column(name = "nome", length = 100)
     private String nome;
+
+    @Column(name = "primeiro_acesso")
+    private Boolean primeiroAcesso;
+
+    @Column(name = "data_expiracao_senha")
+    private LocalDateTime dataExpiracaoSenha;
 
     @Column(name = "identificador", length = 20)
     private String identificador;
@@ -65,6 +72,22 @@ public class Usuarios {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public Boolean getPrimeiroAcesso() {
+        return primeiroAcesso;
+    }
+
+    public void setPrimeiroAcesso(Boolean primeiroAcesso) {
+        this.primeiroAcesso = primeiroAcesso;
+    }
+
+    public LocalDateTime getDataExpiracaoSenha() {
+        return dataExpiracaoSenha;
+    }
+
+    public void setDataExpiracaoSenha(LocalDateTime dataExpiracaoSenha) {
+        this.dataExpiracaoSenha = dataExpiracaoSenha;
     }
 
     public String getIdentificador() {

@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     telefone VARCHAR(15),   
     email VARCHAR(100) UNIQUE,
     senha VARCHAR(255) NOT NULL,
+    primeiro_acesso BOOLEAN DEFAULT TRUE,                
+    data_expiracao_senha TIMESTAMP,                      
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

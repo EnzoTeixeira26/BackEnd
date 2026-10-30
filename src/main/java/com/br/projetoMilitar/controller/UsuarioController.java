@@ -1,6 +1,7 @@
 package com.br.projetoMilitar.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.projetoMilitar.modeloBD.Usuarios;
+import com.br.projetoMilitar.security.LoginRequest;
 import com.br.projetoMilitar.services.UsuarioService;
 
 @RestController
@@ -64,5 +66,36 @@ public class UsuarioController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            Usuarios usuario = service.login(request.getIdentificador(), request.getSenha());
+            return ResponseEntity.ok(usuario);
+        } catch (IllegalStateException e) {
+            if ("TROCA_SENHA_OBRIGATORIA".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Troca de senha obrigatória");
+            }
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/trocar-senha")
+    public ResponseEntity<?> trocarSenha(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String novaSenha = body.get("novaSenha");
+        if (novaSenha == null || novaSenha.length() < 6) {
+            return ResponseEntity.badRequest().body("A nova senha deve ter pelo menos 6 caracteres.");
+        }
+        
+        try {
+            Usuarios usuario = service.trocarSenha(id, novaSenha);
+            return ResponseEntity.ok(usuario);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
