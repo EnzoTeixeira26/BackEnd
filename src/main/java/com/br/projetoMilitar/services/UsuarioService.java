@@ -59,6 +59,7 @@ public class UsuarioService {
         Usuarios novoUsuario = repository.save(usuario);
         
         if (usuario.getEmail() != null && !usuario.getEmail().isBlank()) {
+            // REMOVIDO O TRY/CATCH: Se o e-mail falhar, o erro estoura no app
             try {
                 emailService.enviarBoasVindas(
                     usuario.getEmail(),
@@ -69,7 +70,10 @@ public class UsuarioService {
                 );
                 logger.info("E-mail de boas-vindas enviado para: " + usuario.getEmail());
             } catch (Exception e) {
-                logger.warning("Erro ao enviar e-mail de boas-vindas: " + e.getMessage());
+                // Loga o erro para aparecer no Render
+                logger.severe("Erro ao enviar e-mail de boas-vindas: " + e.getMessage());
+                // Lança uma exceção para o frontend saber que o e-mail falhou
+                throw new RuntimeException("Falha ao enviar o e-mail de cadastro. Verifique as configurações do servidor de e-mail.");
             }
         } else {
             logger.warning("Usuário sem e-mail cadastrado. E-mail de boas-vindas não enviado.");
@@ -102,8 +106,6 @@ public class UsuarioService {
         return repository.countByPerfil(perfil);
     }
 
-    
-
     public Usuarios login(String identificador, String senha) {
         logger.info("Method login started - Identificador: " + identificador);
         
@@ -114,7 +116,6 @@ public class UsuarioService {
             throw new RuntimeException("Senha incorreta");
         }
 
-        //boolean isPrimeiroAcesso = Boolean.TRUE.equals(usuario.getPrimeiroAcesso());
         boolean isSenhaExpirada = usuario.getDataExpiracaoSenha() != null && 
                                   usuario.getDataExpiracaoSenha().isBefore(LocalDateTime.now());
 

@@ -106,11 +106,11 @@ public class UsuarioController {
     public ResponseEntity<String> testarEmail() {
         try {
             emailService.enviarBoasVindas(
-                "enzo.santoste@gmail.com", 
+                "SEU_EMAIL_AQUI@gmail.com", // <-- COLOQUE O SEU E-MAIL PESSOAL AQUI
                 "Coronel Teste",
                 "202600000000099",
-                "wnprfxxpmoprtxqp",
-                "Esta e uma observacao de teste." //test aq   
+                "SenhaTeste123", 
+                "Esta e uma observacao de teste."
             );
             return ResponseEntity.ok("E-mail enviado com sucesso!");
         } catch (Exception e) {
