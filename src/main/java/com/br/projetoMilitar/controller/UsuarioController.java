@@ -102,19 +102,24 @@ public class UsuarioController {
         }
     }
 
-    @GetMapping("/teste-email")
-    public ResponseEntity<String> testarEmail() {
-        try {
-            emailService.enviarBoasVindas(
-                "SEU_EMAIL_AQUI@gmail.com", // <-- COLOQUE O SEU E-MAIL PESSOAL AQUI
-                "Coronel Teste",
-                "202600000000099",
-                "SenhaTeste123", 
-                "Esta e uma observacao de teste."
-            );
-            return ResponseEntity.ok("E-mail enviado com sucesso!");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Erro: " + e.getMessage());
-        }
+   @GetMapping("/teste-email")
+public ResponseEntity<?> testarEmail(@RequestParam(required = false) String destino) {
+    try {
+        String emailDestino = (destino != null && !destino.isBlank())
+                ? destino
+                : "enzo.santoste@gmail.com"; // <-- TROQUE AQUI por um e-mail seu
+        emailService.enviarBoasVindas(
+            emailDestino,
+            "Coronel Teste",
+            "202600000000099",
+            "SenhaTeste123",
+            "Esta e uma observacao de teste."
+        );
+        return ResponseEntity.ok("E-mail enviado com sucesso para " + emailDestino);
+    } catch (Exception e) {
+        java.io.StringWriter sw = new java.io.StringWriter();
+        e.printStackTrace(new java.io.PrintWriter(sw));
+        return ResponseEntity.status(500).body("Erro: " + e + "\n\n" + sw.toString());
     }
+}
 }

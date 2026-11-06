@@ -47,40 +47,47 @@ public class UsuarioService {
     }
 
     public Usuarios create(Usuarios usuario) {
-        logger.info("Method create started - Usuario: " + usuario.getNome());
-        
-        String senhaTextoPlano = GeradorSenha.gerarSenhaAleatoria();
-        logger.info("Senha gerada para o usuário: " + usuario.getIdentificador());
-        
-        usuario.setSenha(senhaTextoPlano);
-        usuario.setPrimeiroAcesso(true);
-        usuario.setDataExpiracaoSenha(LocalDateTime.now().plusDays(30));
-        
-        Usuarios novoUsuario = repository.save(usuario);
-        
-        if (usuario.getEmail() != null && !usuario.getEmail().isBlank()) {
-            // REMOVIDO O TRY/CATCH: Se o e-mail falhar, o erro estoura no app
-            try {
-                emailService.enviarBoasVindas(
-                    usuario.getEmail(),
-                    usuario.getNome(),
-                    usuario.getIdentificador(),
-                    senhaTextoPlano,
-                    usuario.getObservacao()
-                );
-                logger.info("E-mail de boas-vindas enviado para: " + usuario.getEmail());
-            } catch (Exception e) {
-                // Loga o erro para aparecer no Render
-                logger.severe("Erro ao enviar e-mail de boas-vindas: " + e.getMessage());
-                // Lança uma exceção para o frontend saber que o e-mail falhou
-                throw new RuntimeException("Falha ao enviar o e-mail de cadastro. Verifique as configurações do servidor de e-mail.");
-            }
-        } else {
-            logger.warning("Usuário sem e-mail cadastrado. E-mail de boas-vindas não enviado.");
-        }
-        
-        return novoUsuario;
+    logger.info("Method create started - Usuario: " + usuario.getNome());
+
+    String senhaTextoPlano = GeradorSenha.gerarSenhaAleatoria();
+    usuario.setSenha(senhaTextoPlano);
+    usuario.setPrimeiroAcesso(true);
+    usuario.setDataExpiracaoSenha(LocalDateTime.now().plusDays(30));
+
+    // 1) Salva primeiro (se falhar aqui, é problema de banco/coluna)
+    Usuarios novoUsuario;
+    try {
+        novoUsuario = repository.save(usuario);
+        logger.info("Usuário salvo com id: " + novoUsuario.getId());
+    } catch (Exception e) {
+        logger.severe("Falha ao SALVAR usuário no banco: " + e);
+        e.printStackTrace();
+        throw new RuntimeException("Erro ao salvar usuário no banco: " + e.getMessage(), e);
     }
+
+    // 2) Tenta enviar e-mail (se falhar, apenas loga — NÃO derruba o cadastro)
+    if (usuario.getEmail() != null && !usuario.getEmail().isBlank()) {
+        try {
+            emailService.enviarBoasVindas(
+                usuario.getEmail(),
+                usuario.getNome(),
+                usuario.getIdentificador(),
+                senhaTextoPlano,
+                usuario.getObservacao()
+            );
+            logger.info("E-mail enviado para: " + usuario.getEmail());
+        } catch (Exception e) {
+            logger.severe("=== E-MAIL NÃO FOI ENVIADO para " + usuario.getEmail()
+                    + " — usuário CRIADO com id " + novoUsuario.getId() + " ===");
+            e.printStackTrace();
+            // Não propaga — o cadastro em si deu certo.
+        }
+    } else {
+        logger.warning("Usuário sem e-mail. E-mail de boas-vindas não enviado.");
+    }
+
+    return novoUsuario;
+}
 
     public Usuarios update(Long id, Usuarios usuario) {
         logger.info("Method update started - Usuario id: " + id);
