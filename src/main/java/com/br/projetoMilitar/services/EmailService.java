@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import jakarta.mail.internet.MimeMessage;
@@ -18,11 +17,11 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String remetente;
 
-    @Async
+    // @Async REMOVIDO AQUI
     public void enviarBoasVindas(String destino, String nome, String identificador,
                                   String senha, String observacao) {
         
-        System.out.println("=== INICIANDO ENVIO DE E-MAIL (BACKGROUND) ===");
+        System.out.println("=== INICIANDO ENVIO DE E-MAIL (SINCRONO) ===");
         System.out.println("Destino: [" + destino + "]");
         
         try {
@@ -80,6 +79,7 @@ public class EmailService {
             System.out.println("=== FALHA NO ENVIO DO E-MAIL ===");
             System.out.println("Erro: " + e.getMessage());
             e.printStackTrace();
+            throw new RuntimeException("Erro ao enviar e-mail: " + e.getMessage(), e); // Lança o erro para o app saber
         }
     }
 }

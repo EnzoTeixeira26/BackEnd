@@ -54,18 +54,27 @@ public class UsuarioService {
         usuario.setPrimeiroAcesso(true);
         usuario.setDataExpiracaoSenha(LocalDateTime.now().plusDays(30));
 
+        // 1) Salva o usuário no banco
         Usuarios novoUsuario = repository.save(usuario);
         logger.info("Usuário salvo com id: " + novoUsuario.getId());
 
+        // 2) Tenta enviar o e-mail de forma SÍNCRONA (bloqueante)
         if (usuario.getEmail() != null && !usuario.getEmail().isBlank()) {
-            emailService.enviarBoasVindas(
-                usuario.getEmail(),
-                usuario.getNome(),
-                usuario.getIdentificador(),
-                senhaTextoPlano,
-                usuario.getObservacao()
-            );
-            logger.info("Envio de e-mail disparado em background para: " + usuario.getEmail());
+            try {
+                emailService.enviarBoasVindas(
+                    usuario.getEmail(),
+                    usuario.getNome(),
+                    usuario.getIdentificador(),
+                    senhaTextoPlano,
+                    usuario.getObservacao()
+                );
+                logger.info("E-mail enviado com sucesso para: " + usuario.getEmail());
+            } catch (Exception e) {
+                // Como é síncrono, se o e-mail falhar, o frontend vai receber o erro 500
+                // e saberá que o e-mail não foi enviado (mesmo que o usuário esteja no banco).
+                logger.severe("Falha ao enviar e-mail: " + e.getMessage());
+                throw new RuntimeException("Usuário salvo, mas falhou ao enviar o e-mail: " + e.getMessage());
+            }
         } else {
             logger.warning("Usuário sem e-mail. E-mail de boas-vindas não enviado.");
         }
