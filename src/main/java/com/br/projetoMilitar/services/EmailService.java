@@ -4,15 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import jakarta.mail.internet.MimeMessage;
-import java.util.logging.Logger;
 
 @Service
 public class EmailService {
-
-    private static final Logger logger = Logger.getLogger(EmailService.class.getName());
 
     @Autowired
     private JavaMailSender mailSender;
@@ -20,12 +18,13 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String remetente;
 
+    @Async
     public void enviarBoasVindas(String destino, String nome, String identificador,
-                                  String senha, String observacao) throws Exception {
-        logger.info("=== INICIANDO ENVIO DE E-MAIL ===");
-        logger.info("Remetente configurado: [" + remetente + "]");
-        logger.info("Destino: [" + destino + "]");
-
+                                  String senha, String observacao) {
+        
+        System.out.println("=== INICIANDO ENVIO DE E-MAIL (BACKGROUND) ===");
+        System.out.println("Destino: [" + destino + "]");
+        
         try {
             MimeMessage mensagem = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mensagem, true, "UTF-8");
@@ -74,21 +73,13 @@ public class EmailService {
 
             helper.setText(html, true);
 
-            logger.info("Chamando mailSender.send()...");
             mailSender.send(mensagem);
-            logger.info("=== E-MAIL ENVIADO COM SUCESSO PARA " + destino + " ===");
+            System.out.println("=== E-MAIL ENVIADO COM SUCESSO PARA " + destino + " ===");
 
         } catch (Exception e) {
-            logger.severe("=== FALHA NO ENVIO DO E-MAIL ===");
-            logger.severe("Tipo da exceção: " + e.getClass().getName());
-            logger.severe("Mensagem: " + e.getMessage());
-            if (e.getCause() != null) {
-                logger.severe("Causa raiz: " + e.getCause().getClass().getName()
-                        + " - " + e.getCause().getMessage());
-            }
-            logger.severe("Stack trace completo:");
+            System.out.println("=== FALHA NO ENVIO DO E-MAIL ===");
+            System.out.println("Erro: " + e.getMessage());
             e.printStackTrace();
-            throw e;
         }
     }
 }

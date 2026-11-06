@@ -102,12 +102,14 @@ public class UsuarioController {
         }
     }
 
+    //https://backend-zfil.onrender.com/api/v1/usuario/teste-email?destino=enzo.santoste@gmail.com
+
    @GetMapping("/teste-email")
 public ResponseEntity<?> testarEmail(@RequestParam(required = false) String destino) {
     try {
         String emailDestino = (destino != null && !destino.isBlank())
                 ? destino
-                : "enzo.santoste@gmail.com"; // <-- TROQUE AQUI por um e-mail seu
+                : "enzo.santoste@gmail.com";
         emailService.enviarBoasVindas(
             emailDestino,
             "Coronel Teste",
